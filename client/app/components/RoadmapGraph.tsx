@@ -187,9 +187,11 @@ export default function RoadmapGraph() {
 
       {/* Floating panel */}
       {panel && (
-        <div
-          ref={panelRef}
-          className="fixed z-50 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden"
+        <>
+          <div className="fixed inset-0 z-40" onClick={closePanel} />
+          <div
+            ref={panelRef}
+            className="fixed z-50 bg-white border border-zinc-200 rounded-xl shadow-2xl overflow-hidden"
           style={{ left: panel.x, top: panel.y, width: 320 }}
           onClick={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()}
@@ -255,6 +257,7 @@ export default function RoadmapGraph() {
             </p>
           </div>
         </div>
+        </>
       )}
     </>
   );
