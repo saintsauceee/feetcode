@@ -35,11 +35,13 @@ function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
   );
 }
 
+const ARROW_LEN = 7; // px — space reserved for the arrowhead tip
+
 function buildEdgePath(from: TopicNode, to: TopicNode): string {
   const sx = from.x + NODE_W / 2;
   const sy = from.y + NODE_H;
   const ex = to.x + NODE_W / 2;
-  const ey = to.y;
+  const ey = to.y - ARROW_LEN;
   const my = (sy + ey) / 2;
   return `M ${sx} ${sy} C ${sx} ${my}, ${ex} ${my}, ${ex} ${ey}`;
 }
@@ -123,38 +125,35 @@ export default function RoadmapGraph() {
           aria-hidden="true"
         >
           <defs>
-            {/* Open chevron arrowhead — inherits stroke color from the referencing path */}
-            <marker
-              id="arrow"
-              markerWidth="10"
-              markerHeight="8"
-              refX="8"
-              refY="4"
-              orient="auto"
-            >
-              <path
-                d="M 1 1 L 8 4 L 1 7"
-                fill="none"
-                stroke="context-stroke"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </marker>
+            {(['#18181b', '#d4d4d8'] as const).map((color) => (
+              <marker
+                key={color}
+                id={`arrow-${color.slice(1)}`}
+                markerUnits="userSpaceOnUse"
+                markerWidth="7"
+                markerHeight="7"
+                refX="0"
+                refY="3.5"
+                orient="auto"
+              >
+                <path d="M 0 0 L 7 3.5 L 0 7 Z" fill={color} stroke="none" />
+              </marker>
+            ))}
           </defs>
           {edges.map((edge, i) => {
             const from = nodeById(edge.from);
             const to = nodeById(edge.to);
             const isActive =
               activeId === edge.from || activeId === edge.to;
+            const color = isActive ? '#18181b' : '#d4d4d8';
             return (
               <path
                 key={i}
                 d={buildEdgePath(from, to)}
                 fill="none"
-                stroke={isActive ? '#18181b' : '#d4d4d8'}
+                stroke={color}
                 strokeWidth={1.5}
-                markerEnd="url(#arrow)"
+                markerEnd={`url(#arrow-${color.slice(1)})`}
               />
             );
           })}
